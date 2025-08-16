@@ -1,11 +1,15 @@
 package com.felixsolutions.literalura.dto;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GutendexAuthorDTO {
     private String name;
-    @SerializedName("birth_year") private Integer birthYear;
-    @SerializedName("death_year") private Integer deathYear;
+    @JsonAlias("birth_year")
+    private Integer birthYear;
+    @JsonAlias("death_year")
+    private Integer deathYear;
 
     public String getName() { return name; }
     public Integer getBirthYear() { return birthYear; }

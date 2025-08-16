@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 @Component
 public class Menu {
-
     private final CatalogoService service;
     private final Scanner in = new Scanner(System.in);
 
@@ -16,22 +15,21 @@ public class Menu {
     }
 
     public void start() {
-        int op = -1;
-        while (op != 0) {
-            System.out.println("""
-                \n=== LiterAlura ===
-                1) Buscar livro pelo título (API -> salvar)
-                2) Listar livros registrados
-                3) Listar autores registrados
-                4) Listar autores vivos em determinado ano
-                5) Listar livros por idioma [pt|en|es|fr]
-                0) Sair
-                Escolha: """);
+        var opcao = -1;
+        while (opcao != 0) {
+            System.out.println("\n=== LiterAlura ===");
+            System.out.println("1) Buscar livro pelo título (API -> salvar)");
+            System.out.println("2) Listar livros registrados");
+            System.out.println("3) Listar autores registrados");
+            System.out.println("4) Listar autores vivos em determinado ano");
+            System.out.println("5) Quantidade de livros por idioma [pt|en|es|fr]");
+            System.out.println("0) Sair");
+            System.out.print("Escolha: ");
+            var linha = in.nextLine().trim();
+            if (linha.isEmpty()) continue;
+            try { opcao = Integer.parseInt(linha); } catch (Exception e) { opcao = -1; }
 
-            String entrada = in.nextLine().trim();
-            try { op = Integer.parseInt(entrada); } catch (Exception e) { op = -1; }
-
-            switch (op) {
+            switch (opcao) {
                 case 1 -> {
                     System.out.print("Título: ");
                     service.buscarLivroPorTitulo(in.nextLine().trim());
@@ -39,7 +37,7 @@ public class Menu {
                 case 2 -> service.listarLivros();
                 case 3 -> service.listarAutores();
                 case 4 -> {
-                    System.out.print("Ano (yyyy): ");
+                    System.out.print("Ano: ");
                     try {
                         int ano = Integer.parseInt(in.nextLine().trim());
                         service.listarAutoresVivosNoAno(ano);
@@ -51,7 +49,7 @@ public class Menu {
                     System.out.print("Idioma [pt|en|es|fr]: ");
                     service.listarLivrosPorIdioma(in.nextLine().trim());
                 }
-                case 0 -> System.out.println("Até mais! 👋");
+                case 0 -> System.out.println("Até mais!");
                 default -> System.out.println("Opção inválida.");
             }
         }

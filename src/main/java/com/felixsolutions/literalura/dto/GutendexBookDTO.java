@@ -1,14 +1,18 @@
 package com.felixsolutions.literalura.dto;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GutendexBookDTO {
     private Integer id;
     private String title;
-    private java.util.List<GutendexAuthorDTO> authors;
-    private java.util.List<String> languages;
-    @SerializedName("download_count") private Integer downloadCount;
+    private List<GutendexAuthorDTO> authors;
+    private List<String> languages;
+    @JsonAlias("download_count")
+    private Integer downloadCount;
 
     public Integer getId() { return id; }
     public String getTitle() { return title; }

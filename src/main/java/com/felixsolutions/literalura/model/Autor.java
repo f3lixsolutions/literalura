@@ -1,15 +1,17 @@
 package com.felixsolutions.literalura.model;
 
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Autor {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     private String nome;
 
     private Integer anoNascimento;
@@ -18,9 +20,12 @@ public class Autor {
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Livro> livros = new ArrayList<>();
 
-    public Autor() {}
-    public Autor(String nome, Integer nasc, Integer fal) {
-        this.nome = nome; this.anoNascimento = nasc; this.anoFalecimento = fal;
+    public Autor() { }
+
+    public Autor(String nome, Integer anoNascimento, Integer anoFalecimento) {
+        this.nome = nome;
+        this.anoNascimento = anoNascimento;
+        this.anoFalecimento = anoFalecimento;
     }
 
     public Long getId() { return id; }
@@ -28,7 +33,8 @@ public class Autor {
     public Integer getAnoNascimento() { return anoNascimento; }
     public Integer getAnoFalecimento() { return anoFalecimento; }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "%s (nasc: %s, fal: %s)".formatted(nome, anoNascimento, anoFalecimento);
     }
 }

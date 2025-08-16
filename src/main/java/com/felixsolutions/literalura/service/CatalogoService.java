@@ -7,12 +7,14 @@ import com.felixsolutions.literalura.model.Livro;
 import com.felixsolutions.literalura.repository.AutorRepository;
 import com.felixsolutions.literalura.repository.LivroRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class CatalogoService {
+
     private final GutendexClient client;
     private final AutorRepository autorRepo;
     private final LivroRepository livroRepo;
@@ -30,7 +32,7 @@ public class CatalogoService {
             return;
         }
 
-        // escolhe o mais baixado
+        // escolhe o mais baixado entre os resultados
         GutendexBookDTO book = resultados.stream()
                 .max(Comparator.comparing(g -> g.getDownloadCount() == null ? 0 : g.getDownloadCount()))
                 .orElse(resultados.get(0));
@@ -40,11 +42,15 @@ public class CatalogoService {
             return;
         }
 
-        GutendexAuthorDTO a = (book.getAuthors() == null || book.getAuthors().isEmpty()) ? null : book.getAuthors().get(0);
-        String idioma = (book.getLanguages() == null || book.getLanguages().isEmpty()) ? "nd" : book.getLanguages().get(0);
+        // regra do desafio: considerar apenas o primeiro autor e o primeiro idioma
+        GutendexAuthorDTO a = (book.getAuthors() == null || book.getAuthors().isEmpty())
+                ? null : book.getAuthors().get(0);
+        String idioma = (book.getLanguages() == null || book.getLanguages().isEmpty())
+                ? "nd" : book.getLanguages().get(0);
 
         Autor autor = (a == null)
-                ? autorRepo.findByNomeIgnoreCase("Desconhecido").orElseGet(() -> autorRepo.save(new Autor("Desconhecido", null, null)))
+                ? autorRepo.findByNomeIgnoreCase("Desconhecido")
+                .orElseGet(() -> autorRepo.save(new Autor("Desconhecido", null, null)))
                 : autorRepo.findByNomeIgnoreCase(a.getName())
                 .orElseGet(() -> autorRepo.save(new Autor(a.getName(), a.getBirthYear(), a.getDeathYear())));
 
@@ -54,27 +60,39 @@ public class CatalogoService {
         System.out.println("Salvo: " + livro);
     }
 
+    // >>> CORREÇÃO: transação só para garantir a inicialização do autor (LAZY)
+    @Transactional(readOnly = true)
     public void listarLivros() {
         var livros = livroRepo.findAll();
-        if (livros.isEmpty()) System.out.println("Nenhum livro cadastrado.");
-        else livros.forEach(System.out::println);
+        if (livros.isEmpty()) {
+            System.out.println("Nenhum livro cadastrado.");
+            return;
+        }
+        // aqui podemos usar o toString do Livro com segurança (autor será inicializado)
+        livros.forEach(System.out::println);
     }
 
     public void listarAutores() {
         var autores = autorRepo.findAll();
-        if (autores.isEmpty()) System.out.println("Nenhum autor cadastrado.");
-        else autores.forEach(System.out::println);
+        if (autores.isEmpty()) {
+            System.out.println("Nenhum autor cadastrado.");
+            return;
+        }
+        autores.forEach(System.out::println);
     }
 
     public void listarAutoresVivosNoAno(int ano) {
         var vivos = autorRepo.encontrarVivosNoAno(ano);
-        if (vivos.isEmpty()) System.out.println("Nenhum autor encontrado vivo em " + ano);
-        else vivos.forEach(System.out::println);
+        if (vivos.isEmpty()) {
+            System.out.println("Nenhum autor encontrado vivo em " + ano);
+            return;
+        }
+        vivos.forEach(System.out::println);
     }
 
+    // Trello: estatística de quantidade por idioma
     public void listarLivrosPorIdioma(String idioma) {
-        var livros = livroRepo.findByIdiomaIgnoreCase(idioma);
-        if (livros.isEmpty()) System.out.println("Nenhum livro no idioma: " + idioma);
-        else livros.forEach(System.out::println);
+        long qtd = livroRepo.countByIdiomaIgnoreCase(idioma);
+        System.out.println("Quantidade de livros no idioma '" + idioma + "': " + qtd);
     }
 }

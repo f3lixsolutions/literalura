@@ -4,12 +4,13 @@ import jakarta.persistence.*;
 
 @Entity
 public class Livro {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Integer gutendexId;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String titulo;
 
     private String idioma;
@@ -18,18 +19,26 @@ public class Livro {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Autor autor;
 
-    public Livro() {}
-    public Livro(Integer gid, String titulo, String idioma, Integer downloads, Autor autor) {
-        this.gutendexId = gid; this.titulo = titulo; this.idioma = idioma; this.downloads = downloads; this.autor = autor;
+    public Livro() { }
+
+    public Livro(Integer gutendexId, String titulo, String idioma, Integer downloads, Autor autor) {
+        this.gutendexId = gutendexId;
+        this.titulo = titulo;
+        this.idioma = idioma;
+        this.downloads = downloads;
+        this.autor = autor;
     }
 
     public Long getId() { return id; }
+    public Integer getGutendexId() { return gutendexId; }
     public String getTitulo() { return titulo; }
     public String getIdioma() { return idioma; }
     public Integer getDownloads() { return downloads; }
     public Autor getAutor() { return autor; }
 
-    @Override public String toString() {
-        return "\"%s\" [%s] - %s (downloads: %s)".formatted(titulo, idioma, autor.getNome(), downloads);
+    @Override
+    public String toString() {
+        return "\"%s\" [%s] - %s (downloads: %s)".formatted(titulo, idioma,
+                autor != null ? autor.getNome() : "Desconhecido", downloads);
     }
 }

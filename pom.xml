@@ -8,7 +8,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.2</version>
-        <relativePath/> <!-- Busca no repositório do Maven -->
+        <relativePath/>
     </parent>
 
     <groupId>com.felixsolutions</groupId>
@@ -22,7 +22,7 @@
     </properties>
 
     <dependencies>
-        <!-- Núcleo do Spring -->
+        <!-- Núcleo do Spring (auto-config, logging, etc.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -41,14 +41,14 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Gson para parse do JSON da Gutendex -->
+        <!-- JSON: Jackson (como pede o Trello) -->
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.2</version>
         </dependency>
 
-        <!-- Testes (deixa aí pro futuro) -->
+        <!-- Testes -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
